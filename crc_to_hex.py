@@ -31,6 +31,9 @@ low_end_part = ''
 # Получение имени файла
 filename = sys.argv[1]
 
+# Имя выходного файла
+outfilename = sys.argv[2]
+
 f = open(filename, 'r')
 for line in f:
     if (not CheckLine(line)):
@@ -59,10 +62,10 @@ end_adr = end_adr + 4
 end_adr = hex(end_adr)
 
 # Вставка контрольной суммы в конец hex файла
-cmd = f"..\\srec_cat.exe {filename} -Intel -fill 0xFF {start_adr} {end_adr} -crc16-big-endian {end_adr} -o {filename} -Intel"
+cmd = f"..\\srec_cat.exe {filename} -Intel -fill 0xFF {start_adr} {end_adr} -crc16-big-endian {end_adr} -o {outfilename} -Intel"
 os.system(cmd)
 
 # Получение bin файла
 binfilename = filename[:-3] + "bin"
-cmd = f"arm-none-eabi-objcopy --input-target=ihex --output-target=binary {filename} {binfilename}"
+cmd = f"arm-none-eabi-objcopy --input-target=ihex --output-target=binary {outfilename} {binfilename}"
 os.system(cmd)
