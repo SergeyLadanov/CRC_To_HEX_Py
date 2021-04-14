@@ -55,5 +55,5 @@ start_adr = hex(start_adr)
 end_adr = end_adr + 4
 end_adr = hex(end_adr)
 
-cmd = f".\\srec_cat.exe ATKUE.hex -Intel -fill 0xFF {start_adr} {end_adr} -crc16-big-endian {end_adr} -o {newfilename} -Intel"
+cmd = f"..\\srec_cat.exe {filename} -Intel -fill 0xFF {start_adr} {end_adr} -crc16-big-endian {end_adr} -o {newfilename} -Intel"
 os.system(cmd)
