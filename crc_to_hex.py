@@ -1,4 +1,6 @@
 #! python
+import os
+import sys
 
 # Класс строки Hex файла
 class HexLine(object):
@@ -23,7 +25,10 @@ low_start_part = ''
 high_end_adr = ''
 low_end_part = ''
 
-f = open('ATKUE.hex', 'r')
+filename = sys.argv[1]
+newfilename = sys.argv[2]
+
+f = open(filename, 'r')
 for line in f:
     if (not CheckLine(line)):
         print("Hex файл имеет неверный формат")
@@ -42,10 +47,13 @@ for line in f:
 
 f.close()
 # Компоновка начального адреса
-start_adr = '0x' + high_start_adr + low_start_part
+start_adr = int(high_start_adr + low_start_part, 16)
 # Компоновка конечного адреса
-end_adr = '0x' + high_end_adr + low_end_part
+end_adr = int(high_end_adr + low_end_part, 16)
 
-# Вывод результатов
-print(start_adr)
-print(end_adr)
+start_adr = hex(start_adr)
+end_adr = end_adr + 4
+end_adr = hex(end_adr)
+
+cmd = f".\\srec_cat.exe ATKUE.hex -Intel -fill 0xFF {start_adr} {end_adr} -crc16-big-endian {end_adr} -o {newfilename} -Intel"
+os.system(cmd)
