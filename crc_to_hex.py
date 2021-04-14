@@ -18,15 +18,18 @@ class HexLine(object):
 def CheckLine(input):
     return input.startswith(':')
 
-# Старшая 
+# Старшая часть начального адреса прошивки
 high_start_adr = ''
+# Младшая часть начального адреса прошивки
 low_start_part = ''
 
+# Старшая часть конечного адреса прошивки
 high_end_adr = ''
+# Младшая часть конечного адреса прошивки
 low_end_part = ''
 
+# Получение имени файла
 filename = sys.argv[1]
-newfilename = sys.argv[2]
 
 f = open(filename, 'r')
 for line in f:
@@ -55,5 +58,11 @@ start_adr = hex(start_adr)
 end_adr = end_adr + 4
 end_adr = hex(end_adr)
 
-cmd = f"..\\srec_cat.exe {filename} -Intel -fill 0xFF {start_adr} {end_adr} -crc16-big-endian {end_adr} -o {newfilename} -Intel"
+# Вставка контрольной суммы в конец hex файла
+cmd = f"..\\srec_cat.exe {filename} -Intel -fill 0xFF {start_adr} {end_adr} -crc16-big-endian {end_adr} -o {filename} -Intel"
+os.system(cmd)
+
+# Получение bin файла
+binfilename = filename[:-3] + "bin"
+cmd = f"arm-none-eabi-objcopy --input-target=ihex --output-target=binary {filename} {binfilename}"
 os.system(cmd)
