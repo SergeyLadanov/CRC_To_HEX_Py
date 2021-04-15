@@ -34,6 +34,9 @@ filename = sys.argv[1]
 # Имя выходного файла
 outfilename = sys.argv[2]
 
+# Добавка к конечному адресу
+addition = 0
+
 f = open(filename, 'r')
 for line in f:
     if (not CheckLine(line)):
@@ -50,22 +53,36 @@ for line in f:
         if (low_start_part == ''):
             low_start_part = hexline.Adr
         low_end_part = hexline.Adr
+        addition = int(hexline.Num, 16)
 
 f.close()
 # Компоновка начального адреса
 start_adr = int(high_start_adr + low_start_part, 16)
 # Компоновка конечного адреса
-end_adr = int(high_end_adr + low_end_part, 16)
+end_adr = int(high_end_adr + low_end_part, 16) + addition
 
 start_adr = hex(start_adr)
-end_adr = end_adr + 4
 end_adr = hex(end_adr)
+
+print("Start adr: ", start_adr)
+print("End adr: ", end_adr)
+print("Writing CRC to the end of hex file...")
 
 # Вставка контрольной суммы в конец hex файла
 cmd = f"..\\srec_cat.exe {filename} -Intel -fill 0xFF {start_adr} {end_adr} -crc16-big-endian {end_adr} -o {outfilename} -Intel"
-os.system(cmd)
 
+if (not os.system(cmd)):
+    print("CRC has been insered successfuly")
+else:
+    print("Error of inserting CRC")
+
+print("Creating bin file...")
 # Получение bin файла
 binfilename = filename[:-3] + "bin"
 cmd = f"arm-none-eabi-objcopy --input-target=ihex --output-target=binary {outfilename} {binfilename}"
 os.system(cmd)
+
+if (not os.system(cmd)):
+    print(f"Bin file {binfilename} has been created successfuly")
+else:
+    print("Error of creating bin file")
