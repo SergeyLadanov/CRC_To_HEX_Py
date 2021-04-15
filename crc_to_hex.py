@@ -11,7 +11,7 @@ class HexLine(object):
         self.Num = line[1:3]
         self.Adr = line[3:7]
         self.Type = line[7:9]
-        self.Data = line[9:(9 + int(self.Num) * 2)]
+        self.Data = line[9:(9 + int(self.Num, 16) * 2)]
         
 
 # Проверка формата строки Hex файла
