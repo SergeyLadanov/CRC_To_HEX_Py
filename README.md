@@ -33,3 +33,30 @@ python ../crc_to_hex.py "${ProjName}.hex" "${ProjName}_CRC.hex"
 
 ![Скриншот настройки загрузки](Resources/debug_settings.png)
 
+## Алгоритм вычисления CRC16 программой srec_cat
+
+Используемый полином: 0x1021 
+```
+X^16 + X^12 + X^5 + 1
+```
+Начальное значение контрольной суммы: 0x1D0F
+
+Функция на Си:
+
+```
+uint16_t Crc16(uint8_t *pcBlock, uint32_t len)
+{
+    uint16_t crc = 0x1D0F;
+    uint8_t i;
+
+    while (len--)
+    {
+        crc ^= *pcBlock++ << 8;
+
+        for (i = 0; i < 8; i++)
+            crc = crc & 0x8000 ? (crc << 1) ^ 0x1021 : crc << 1;
+    }
+    return crc;
+}
+```
+
