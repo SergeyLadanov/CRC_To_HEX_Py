@@ -68,17 +68,20 @@ print("Start adr: ", start_adr)
 print("End adr: ", end_adr)
 print("Writing CRC to the end of hex file...")
 
+
+
 # Вставка контрольной суммы в конец hex файла
-cmd = f"..\\srec_cat.exe {filename} -Intel -fill 0xFF {start_adr} {end_adr} -crc16-big-endian {end_adr} -o {outfilename} -Intel"
+cmd = f"..\\srec_cat.exe {filename} -Intel -fill 0xFF {start_adr} {end_adr} -crc16-l-e {end_adr} -o {outfilename} -Intel"
 
 if (not os.system(cmd)):
     print("CRC has been insered successfuly")
 else:
     print("Error of inserting CRC")
+    exit(1)
 
 print("Creating bin file...")
 # Получение bin файла
-binfilename = filename[:-3] + "bin"
+binfilename = outfilename[:-3] + "bin"
 cmd = f"arm-none-eabi-objcopy --input-target=ihex --output-target=binary {outfilename} {binfilename}"
 os.system(cmd)
 
